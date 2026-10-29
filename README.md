@@ -41,6 +41,41 @@ O workflow faz o resto. Em um ou dois minutos o pacote está no ar.
 Para remover um pacote, apague o `.deb` de `pool/` e dê push — os índices são
 regenerados do zero a cada publicação.
 
+## Publicar pela página /admin
+
+<https://apt.liptech.com.br/admin/> — arraste um `.deb`, clique em Publicar.
+
+O GitHub Pages serve só arquivos estáticos, então **não há servidor** para
+receber o upload: a página fala direto com a API do GitHub usando um token que
+você digita. Crie um [token de acesso pessoal fine-grained][pat] com
+**Contents: Read and write** restrito a `liptech/apt`, e dê validade curta.
+
+[pat]: https://github.com/settings/personal-access-tokens/new
+
+O token fica só na aba aberta, a menos que você marque “lembrar neste
+navegador”. Ele nunca passa por servidor nosso — vai do seu navegador para
+`api.github.com`. A página é pública (qualquer um abre a URL), mas sem token
+não faz nada.
+
+Como arquivos de pacote passam de 1 MB, a página usa a Git Data API
+(blob → tree → commit → ref) em vez da Contents API.
+
+### A caixa de entrada
+
+Por baixo, a página só joga o arquivo em `incoming/`. Quem faz o trabalho é o
+workflow `intake.yml`: ele lê o `control` de cada `.deb`, renomeia para
+`<pacote>_<versão>_<arquitetura>.deb`, arquiva no pool, esvazia a entrada e
+publica.
+
+Isso significa que **a página é opcional**. Qualquer coisa que coloque um
+arquivo em `incoming/` serve, sem token nenhum:
+
+- a interface do GitHub, em **Add file → Upload files** (já autenticada);
+- `git add incoming/pacote.deb && git push`.
+
+Um arquivo que não seja um `.deb` válido faz o workflow falhar antes de tocar
+no pool, e o repositório no ar continua intacto.
+
 ## Sincronização automática de releases
 
 Pacotes que já são publicados como Release em outro repositório da LIPTECH não
@@ -94,10 +129,14 @@ scripts/build-repo.sh                monta e assina ./public
 scripts/render-site.sh               renderiza a página e a lista de pacotes
 scripts/add-package.sh               coloca um .deb no lugar certo do pool
 scripts/sync-releases.sh             traz .deb das Releases de outros repos
+scripts/intake.sh                    arquiva no pool o que chega em incoming/
+site/admin/index.template.html       página de publicação
+incoming/                            caixa de entrada de .deb
 repo.conf                            suíte, componentes, arquiteturas, domínio
 sync-sources.json                    repositórios acompanhados automaticamente
 .github/workflows/publish.yml        build + assinatura + deploy no Pages
 .github/workflows/sync-releases.yml  sincronização diária das releases
+.github/workflows/intake.yml         arquiva a caixa de entrada e publica
 ```
 
 Nada em `public/` é versionado: ele é gerado a cada build.

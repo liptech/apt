@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>LIPTECH · Publicar pacote</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --black:#0A0A0A;--teal:#004D61;--teal-mid:#00899B;--cyan:#00C5DC;--brand:#29ABE2;
+  --txt:#E8EAEC;--muted:#9AA3AA;--dim:#6B747C;--ok:#3BD67A;--warn:#F5B942;--err:#FF5C5C;
+  --line:rgba(0,77,97,.28);--line-soft:rgba(0,77,97,.15);--glass:rgba(10,10,10,.6);
+  --radius:.625rem;
+  --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--black);color:var(--txt);font-family:var(--sans);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:radial-gradient(900px 500px at 15% -5%,rgba(0,77,97,.30),transparent 70%),
+             radial-gradient(700px 400px at 95% 10%,rgba(41,171,226,.10),transparent 70%),
+             linear-gradient(180deg,#0A0A0A 0%,#070A0C 100%)}
+.scan{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px)}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.72);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft)}
+.hdr{display:flex;align-items:center;gap:18px;height:68px}
+.hdr img{height:28px}
+.hdr .tag{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal-mid);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.hdr nav{margin-left:auto;display:flex;gap:22px}
+.hdr nav a{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none}
+.hdr nav a:hover{color:var(--cyan)}
+h1{font-size:clamp(1.7rem,4.5vw,2.4rem);margin:40px 0 6px;font-weight:700;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:0 0 30px;max-width:64ch}
+.label{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--teal-mid);display:block;margin-bottom:10px}
+.panel{position:relative;background:var(--glass);backdrop-filter:blur(16px);
+  border:1px solid var(--line-soft);border-radius:var(--radius);padding:24px;margin-bottom:22px}
+.panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;
+  border-color:var(--teal-mid);opacity:.6;pointer-events:none}
+.panel::before{top:-1px;left:-1px;border-top:1px solid;border-left:1px solid;border-top-left-radius:var(--radius)}
+.panel::after{bottom:-1px;right:-1px;border-bottom:1px solid;border-right:1px solid;border-bottom-right-radius:var(--radius)}
+input[type=password],input[type=text]{width:100%;background:rgba(0,0,0,.5);color:var(--txt);
+  border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;
+  font-family:var(--mono);font-size:13px}
+input:focus{outline:2px solid var(--brand);outline-offset:1px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.check{display:flex;align-items:center;gap:9px;font-size:.85rem;color:var(--muted);cursor:pointer}
+.check input{accent-color:var(--brand);width:15px;height:15px}
+button{cursor:pointer;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--txt);border:1px solid var(--line);
+  border-radius:var(--radius);padding:12px 20px;background:rgba(0,77,97,.14);transition:all .22s}
+button:hover:not(:disabled){background:rgba(0,77,97,.34);border-color:var(--teal-mid)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:rgba(41,171,226,.16);border-color:rgba(41,171,226,.45);color:#fff}
+button.primary:hover:not(:disabled){background:rgba(41,171,226,.3);border-color:var(--brand)}
+button.danger{background:rgba(255,92,92,.1);border-color:rgba(255,92,92,.3);color:#FFB4B4;
+  padding:7px 12px;font-size:9.5px}
+button.danger:hover:not(:disabled){background:rgba(255,92,92,.22);border-color:var(--err)}
+.drop{border:1.5px dashed var(--line);border-radius:var(--radius);padding:44px 20px;text-align:center;
+  transition:all .25s;cursor:pointer;background:rgba(0,0,0,.25)}
+.drop:hover,.drop.over{border-color:var(--brand);background:rgba(41,171,226,.07)}
+.drop .big{font-size:1.02rem;margin:0 0 6px;color:var(--txt)}
+.drop .sm{font-size:.84rem;color:var(--dim);margin:0}
+.files{list-style:none;padding:0;margin:18px 0 0}
+.files li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line-soft);
+  border-radius:var(--radius);margin-bottom:8px;font-family:var(--mono);font-size:12.5px;
+  background:rgba(0,0,0,.3)}
+.files .nm{flex:1;word-break:break-all;color:var(--txt)}
+.files .sz{color:var(--dim);white-space:nowrap}
+.files .x{background:none;border:none;color:var(--dim);padding:2px 6px;font-size:15px;letter-spacing:0}
+.files .x:hover{color:var(--err);background:none}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--teal-mid);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:500}
+td{padding:12px;border-bottom:1px solid rgba(0,77,97,.1)}
+tr:last-child td{border-bottom:none}
+td.pkg{font-weight:600;white-space:nowrap}
+td code{font-family:var(--mono);font-size:.84rem;color:var(--brand)}
+td.act{text-align:right}
+.muted{color:var(--dim);font-size:.85rem}
+#log{font-family:var(--mono);font-size:12px;line-height:1.85;margin:0;padding:0;list-style:none;
+  max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,77,97,.55) transparent}
+#log li{display:flex;gap:10px;padding:2px 0}
+#log .t{color:var(--dim);white-space:nowrap}
+#log .info{color:var(--muted)} #log .ok{color:var(--ok)}
+#log .warn{color:var(--warn)}  #log .err{color:var(--err)}
+.bar{height:3px;background:rgba(0,77,97,.22);border-radius:2px;overflow:hidden;margin-top:16px;display:none}
+.bar.on{display:block}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--cyan));
+  transition:width .3s}
+.hint{font-size:.82rem;color:var(--dim);margin:12px 0 0;line-height:1.65}
+.hint a{color:var(--muted)}
+.hint code{font-family:var(--mono);font-size:.92em;color:var(--muted)}
+.warnbox{border:1px solid rgba(245,185,66,.3);background:rgba(245,185,66,.06);
+  border-radius:var(--radius);padding:15px 17px;font-size:.85rem;color:#E9D9B4;margin-top:16px}
+.warnbox b{color:var(--warn)}
+footer{border-top:1px solid var(--line-soft);padding:26px 0 44px;margin-top:34px}
+footer p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim)}
+::selection{background:var(--teal);color:#fff}
+@media(max-width:620px){.hdr nav a:first-child{display:none}}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="scan"></div>
+
+<header><div class="wrap hdr">
+  <a href="../"><img src="../assets/liptech-horizontal.svg" alt="LIPTECH"></a>
+  <span class="tag">admin</span>
+  <nav>
+    <a href="../">Repositório</a>
+    <a href="https://github.com/{{REPO}}/actions" target="_blank" rel="noopener">Execuções</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <h1>Publicar pacote</h1>
+  <p class="lead">
+    Envie um <code style="font-family:var(--mono);color:var(--brand)">.deb</code> e ele é
+    arquivado, assinado e publicado em <code style="font-family:var(--mono);color:var(--brand)">{{DOMAIN}}</code>
+    em cerca de um minuto. O nome do arquivo não importa — o servidor lê o pacote e renomeia.
+  </p>
+
+  <!-- ------------------------------------------------ token -->
+  <div class="panel">
+    <span class="label">01 · acesso</span>
+    <input type="password" id="token" placeholder="ghp_… ou github_pat_…" autocomplete="off" spellcheck="false">
+    <div class="row">
+      <label class="check"><input type="checkbox" id="remember"> Lembrar neste navegador</label>
+      <button id="check" style="margin-left:auto">Verificar</button>
+    </div>
+    <p class="hint">
+      Um <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">token
+      de acesso pessoal</a> com permissão <b>Contents: Read and write</b> apenas em
+      <code>{{REPO}}</code>. Esta página é estática: o token sai do seu navegador direto
+      para a API do GitHub, nunca passa por nenhum servidor nosso.
+    </p>
+    <div class="warnbox">
+      <b>Sem marcar “lembrar”</b>, o token vive só nesta aba e some quando você a fecha.
+      Marcando, ele fica guardado neste navegador — use só em máquina sua.
+      Dê sempre validade curta ao token e restrinja a este repositório.
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------ upload -->
+  <div class="panel">
+    <span class="label">02 · pacote</span>
+    <div class="drop" id="drop">
+      <p class="big">Arraste um <b>.deb</b> aqui</p>
+      <p class="sm">ou clique para escolher</p>
+      <input type="file" id="file" accept=".deb,application/vnd.debian.binary-package" multiple hidden>
+    </div>
+    <ul class="files" id="files"></ul>
+    <div class="bar" id="bar"><i></i></div>
+    <div class="row">
+      <button class="primary" id="send" disabled>Publicar</button>
+      <span class="muted" id="sendhint"></span>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------ pacotes -->
+  <div class="panel">
+    <span class="label">03 · no repositório</span>
+    <div id="pkgs"><p class="muted">Carregando…</p></div>
+  </div>
+
+  <!-- ------------------------------------------------ log -->
+  <div class="panel">
+    <span class="label">04 · registro</span>
+    <ul id="log"></ul>
+  </div>
+</main>
+
+<footer class="wrap"><p>LIPTECH · Explorando Tecnologias</p></footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var REPO   = "{{REPO}}";
+  var BRANCH = "main";
+  var SUITE  = "{{SUITE}}";
+  var API    = "https://api.github.com";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var tokenEl = $("token"), rememberEl = $("remember");
+  var dropEl = $("drop"), fileEl = $("file"), filesEl = $("files");
+  var sendEl = $("send"), sendHintEl = $("sendhint");
+  var barEl = $("bar"), barFill = barEl.firstElementChild;
+  var logEl = $("log"), pkgsEl = $("pkgs");
+
+  var queue = [];
+
+  // ---------------------------------------------------------- utilidades
+  function log(msg, kind) {
+    var li = document.createElement("li");
+    var t = document.createElement("span");
+    t.className = "t";
+    t.textContent = new Date().toLocaleTimeString("pt-BR");
+    var m = document.createElement("span");
+    m.className = kind || "info";
+    m.textContent = msg;
+    li.appendChild(t); li.appendChild(m);
+    logEl.appendChild(li);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function size(b) {
+    var u = ["B", "KB", "MB", "GB"], i = 0;
+    while (b >= 1024 && i < u.length - 1) { b /= 1024; i++; }
+    return (i === 0 ? b.toFixed(0) : b.toFixed(1)) + " " + u[i];
+  }
+
+  function store(key, val, persist) {
+    try {
+      (persist ? localStorage : sessionStorage).setItem(key, val);
+      (persist ? sessionStorage : localStorage).removeItem(key);
+    } catch (e) { /* modo privado, armazenamento bloqueado */ }
+  }
+  function load(key) {
+    try { return sessionStorage.getItem(key) || localStorage.getItem(key) || ""; }
+    catch (e) { return ""; }
+  }
+  function forget(key) {
+    try { sessionStorage.removeItem(key); localStorage.removeItem(key); } catch (e) {}
+  }
+
+  function token() { return tokenEl.value.trim(); }
+
+  async function api(path, opts) {
+    opts = opts || {};
+    var res = await fetch(API + path, {
+      method: opts.method || "GET",
+      headers: {
+        "Authorization": "Bearer " + token(),
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "Content-Type": "application/json"
+      },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+    if (!res.ok) {
+      var detail = "";
+      try { detail = (await res.json()).message || ""; } catch (e) {}
+      throw new Error("GitHub " + res.status + (detail ? " — " + detail : ""));
+    }
+    return res.status === 204 ? null : res.json();
+  }
+
+  // base64 em blocos: um arquivo de 16 MB estoura a pilha de uma vez só
+  async function toBase64(file) {
+    var buf = new Uint8Array(await file.arrayBuffer());
+    var out = "", step = 0x8000;
+    for (var i = 0; i < buf.length; i += step) {
+      out += String.fromCharCode.apply(null, buf.subarray(i, i + step));
+    }
+    return btoa(out);
+  }
+
+  function safeName(name) {
+    return name.replace(/^.*[\\\/]/, "").replace(/[^A-Za-z0-9._-]/g, "-");
+  }
+
+  function progress(p) {
+    barEl.classList.add("on");
+    barFill.style.width = Math.round(p * 100) + "%";
+  }
+  function progressDone() {
+    setTimeout(function () { barEl.classList.remove("on"); barFill.style.width = "0"; }, 900);
+  }
+
+  // ---------------------------------------------------------- commit
+  // Contents API tem limite de 1 MB; pacotes passam disso, então o caminho
+  // é a Git Data API: blob -> tree -> commit -> mover a ref.
+  async function commitFiles(entries, message) {
+    var ref = await api("/repos/" + REPO + "/git/ref/heads/" + BRANCH);
+    var head = ref.object.sha;
+    var headCommit = await api("/repos/" + REPO + "/git/commits/" + head);
+
+    var tree = [];
+    for (var i = 0; i < entries.length; i++) {
+      var e = entries[i];
+      if (e.remove) {
+        tree.push({ path: e.path, mode: "100644", type: "blob", sha: null });
+      } else {
+        log("enviando " + e.path + " (" + size(e.file.size) + ")…");
+        var content = await toBase64(e.file);
+        var blob = await api("/repos/" + REPO + "/git/blobs", {
+          method: "POST", body: { content: content, encoding: "base64" }
+        });
+        tree.push({ path: e.path, mode: "100644", type: "blob", sha: blob.sha });
+        progress((i + 1) / (entries.length + 1));
+      }
+    }
+
+    var newTree = await api("/repos/" + REPO + "/git/trees", {
+      method: "POST", body: { base_tree: headCommit.tree.sha, tree: tree }
+    });
+    var commit = await api("/repos/" + REPO + "/git/commits", {
+      method: "POST", body: { message: message, tree: newTree.sha, parents: [head] }
+    });
+    await api("/repos/" + REPO + "/git/refs/heads/" + BRANCH, {
+      method: "PATCH", body: { sha: commit.sha }
+    });
+    progress(1);
+    return commit.sha;
+  }
+
+  // ---------------------------------------------------------- fila
+  function renderQueue() {
+    filesEl.innerHTML = "";
+    queue.forEach(function (f, i) {
+      var li = document.createElement("li");
+      var nm = document.createElement("span");
+      nm.className = "nm"; nm.textContent = f.name;
+      var sz = document.createElement("span");
+      sz.className = "sz"; sz.textContent = size(f.size);
+      var x = document.createElement("button");
+      x.className = "x"; x.type = "button"; x.textContent = "×";
+      x.title = "Remover da fila";
+      x.addEventListener("click", function () { queue.splice(i, 1); renderQueue(); });
+      li.appendChild(nm); li.appendChild(sz); li.appendChild(x);
+      filesEl.appendChild(li);
+    });
+    sendEl.disabled = queue.length === 0;
+    sendHintEl.textContent = queue.length
+      ? queue.length + " arquivo(s) na fila"
+      : "";
+  }
+
+  function addFiles(list) {
+    Array.prototype.forEach.call(list, function (f) {
+      if (!/\.deb$/i.test(f.name)) {
+        log("ignorado, não é .deb: " + f.name, "warn");
+        return;
+      }
+      queue.push(f);
+    });
+    renderQueue();
+  }
+
+  dropEl.addEventListener("click", function () { fileEl.click(); });
+  fileEl.addEventListener("change", function () { addFiles(fileEl.files); fileEl.value = ""; });
+  ["dragenter", "dragover"].forEach(function (ev) {
+    dropEl.addEventListener(ev, function (e) {
+      e.preventDefault(); dropEl.classList.add("over");
+    });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    dropEl.addEventListener(ev, function (e) {
+      e.preventDefault(); dropEl.classList.remove("over");
+    });
+  });
+  dropEl.addEventListener("drop", function (e) {
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+
+  // ---------------------------------------------------------- publicar
+  sendEl.addEventListener("click", async function () {
+    if (!token()) { log("informe o token primeiro", "err"); tokenEl.focus(); return; }
+    if (!queue.length) return;
+
+    sendEl.disabled = true;
+    var names = queue.map(function (f) { return f.name; });
+    try {
+      var entries = queue.map(function (f) {
+        return { path: "incoming/" + safeName(f.name), file: f };
+      });
+      var sha = await commitFiles(entries,
+        "pacote: enviado pela página admin\n\n" + names.join("\n"));
+      log("commit " + sha.slice(0, 7) + " criado", "ok");
+      log("o workflow vai arquivar e publicar; acompanhe em Execuções", "ok");
+      queue = [];
+      renderQueue();
+      setTimeout(loadPackages, 60000);
+    } catch (err) {
+      log(err.message, "err");
+    } finally {
+      progressDone();
+      sendEl.disabled = queue.length === 0;
+    }
+  });
+
+  // ---------------------------------------------------------- listagem
+  function parsePackages(text) {
+    var out = [];
+    text.split(/\n\n+/).forEach(function (block) {
+      if (!block.trim()) return;
+      var f = {}, key = null;
+      block.split("\n").forEach(function (line) {
+        if (/^[ \t]/.test(line) && key) { f[key] += "\n" + line.trim(); }
+        else {
+          var i = line.indexOf(":");
+          if (i > 0) { key = line.slice(0, i).trim(); f[key] = line.slice(i + 1).trim(); }
+        }
+      });
+      if (f.Package) out.push(f);
+    });
+    return out;
+  }
+
+  async function loadPackages() {
+    pkgsEl.innerHTML = '<p class="muted">Carregando…</p>';
+    var archs = ["amd64", "arm64", "all"], all = [], seen = {};
+    for (var i = 0; i < archs.length; i++) {
+      try {
+        var r = await fetch("../dists/" + SUITE + "/main/binary-" + archs[i] +
+                            "/Packages?t=" + Date.now());
+        if (!r.ok) continue;
+        parsePackages(await r.text()).forEach(function (p) {
+          var k = p.Package + "|" + p.Version + "|" + p.Architecture;
+          if (!seen[k]) { seen[k] = 1; all.push(p); }
+        });
+      } catch (e) { /* índice ausente para essa arquitetura */ }
+    }
+
+    if (!all.length) {
+      pkgsEl.innerHTML = '<p class="muted">Nenhum pacote publicado ainda.</p>';
+      return;
+    }
+    all.sort(function (a, b) { return a.Package.localeCompare(b.Package); });
+
+    var t = document.createElement("table");
+    t.innerHTML = "<thead><tr><th>Pacote</th><th>Versão</th><th>Arq.</th>" +
+                  "<th>Tamanho</th><th></th></tr></thead>";
+    var tb = document.createElement("tbody");
+    all.forEach(function (p) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td class="pkg"></td><td><code></code></td><td></td>' +
+                     '<td class="muted"></td><td class="act"></td>';
+      tr.children[0].textContent = p.Package;
+      tr.children[1].firstChild.textContent = p.Version;
+      tr.children[2].textContent = p.Architecture;
+      tr.children[3].textContent = size(parseInt(p.Size, 10) || 0);
+      var del = document.createElement("button");
+      del.className = "danger"; del.type = "button"; del.textContent = "remover";
+      del.addEventListener("click", function () { removePackage(p, del); });
+      tr.children[4].appendChild(del);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    pkgsEl.innerHTML = "";
+    pkgsEl.appendChild(t);
+  }
+
+  async function removePackage(p, btn) {
+    if (!token()) { log("informe o token primeiro", "err"); tokenEl.focus(); return; }
+    if (!p.Filename) { log("sem caminho no índice para " + p.Package, "err"); return; }
+    if (!confirm("Remover " + p.Package + " " + p.Version + " (" + p.Architecture +
+                 ") do repositório?\n\nEle deixa de ser instalável por apt.")) return;
+    btn.disabled = true;
+    try {
+      var sha = await commitFiles(
+        [{ path: p.Filename, remove: true }],
+        "pacote: removido " + p.Package + " " + p.Version + " pela página admin");
+      log("removido em " + sha.slice(0, 7) + "; republicando", "ok");
+      setTimeout(loadPackages, 60000);
+    } catch (err) {
+      log(err.message, "err");
+      btn.disabled = false;
+    } finally {
+      progressDone();
+    }
+  }
+
+  // ---------------------------------------------------------- token
+  $("check").addEventListener("click", async function () {
+    if (!token()) { log("campo do token vazio", "warn"); return; }
+    try {
+      var r = await api("/repos/" + REPO);
+      var perm = r.permissions && r.permissions.push;
+      if (perm) log("token válido, com escrita em " + REPO, "ok");
+      else log("token lê " + REPO + ", mas não tem permissão de escrita", "warn");
+      store("liptech_token", token(), rememberEl.checked);
+      if (!rememberEl.checked) log("guardado só nesta aba", "info");
+    } catch (err) {
+      log(err.message, "err");
+    }
+  });
+
+  tokenEl.addEventListener("change", function () {
+    if (token()) store("liptech_token", token(), rememberEl.checked);
+    else forget("liptech_token");
+  });
+  rememberEl.addEventListener("change", function () {
+    if (token()) store("liptech_token", token(), rememberEl.checked);
+  });
+
+  (function init() {
+    var saved = load("liptech_token");
+    if (saved) {
+      tokenEl.value = saved;
+      try { rememberEl.checked = !!localStorage.getItem("liptech_token"); } catch (e) {}
+      log("token recuperado do navegador", "info");
+    } else {
+      log("informe um token do GitHub para publicar", "info");
+    }
+    renderQueue();
+    loadPackages();
+  })();
+})();
+</script>
+</body>
+</html>

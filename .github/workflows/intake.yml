@@ -1,0 +1,59 @@
+name: Arquivar da caixa de entrada
+
+# Dispara quando algo chega em incoming/ — pela página /admin, pela interface
+# do GitHub ou por push normal. Lê o control de cada .deb, arquiva no pool com
+# o nome correto, esvazia a entrada e chama a publicação.
+#
+# O commit daqui usa o GITHUB_TOKEN, que por definição não dispara outros
+# workflows; por isso publish.yml é chamado explicitamente no fim.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'incoming/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: intake
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    name: Arquivar no pool
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.intake.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Arquivar
+        id: intake
+        run: scripts/intake.sh
+
+      - name: Commitar
+        if: steps.intake.outputs.changed == '1'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pool incoming
+          if git diff --cached --quiet; then
+            echo "nada a commitar"
+            exit 0
+          fi
+          git commit -m "pacote: arquivado da caixa de entrada
+
+          Commit automático de .github/workflows/intake.yml."
+          git push
+
+  publish:
+    name: Publicar
+    needs: intake
+    if: needs.intake.outputs.changed == '1'
+    uses: ./.github/workflows/publish.yml
+    secrets: inherit

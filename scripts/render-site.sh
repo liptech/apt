@@ -12,7 +12,7 @@ OUT="${1:?uso: render-site.sh <dir-de-saida>}"
 source "$ROOT/repo.conf"
 
 export OUT ROOT ORIGIN LABEL SUITE CODENAME COMPONENTS ARCHITECTURES \
-       DESCRIPTION DOMAIN KEYRING_NAME
+       DESCRIPTION DOMAIN KEYRING_NAME GITHUB_REPO
 
 python3 - <<'PY'
 import glob, html, os, pathlib, datetime
@@ -123,6 +123,7 @@ repl = {
     "{{COMPONENTS}}": env["COMPONENTS"],
     "{{ARCHS}}":      ", ".join(env["ARCHITECTURES"].split()),
     "{{ORIGIN}}":     env["ORIGIN"],
+    "{{REPO}}":       env.get("GITHUB_REPO", ""),
     "{{PACKAGES}}":   table,
     "{{PKGCOUNT}}":   str(len(pkgs)),
     "{{FINGERPRINT}}": fingerprint,
@@ -147,6 +148,16 @@ for name in ("setup.sh", "CNAME", ".nojekyll"):
         dst.write_text(text, encoding="utf-8")
         if name.endswith(".sh"):
             dst.chmod(0o755)
+
+# pagina /admin, com os mesmos placeholders
+admin_src = root / "site" / "admin" / "index.template.html"
+if admin_src.exists():
+    at = admin_src.read_text(encoding="utf-8")
+    for k, v in repl.items():
+        at = at.replace(k, v)
+    (out / "admin").mkdir(parents=True, exist_ok=True)
+    (out / "admin" / "index.html").write_text(at, encoding="utf-8")
+    print("    admin/index.html")
 
 # 404 simples, se existir
 src = root / "site" / "404.html"
