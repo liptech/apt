@@ -10,6 +10,7 @@ on:
       - 'repo.conf'
       - '.github/workflows/publish.yml'
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read

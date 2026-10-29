@@ -41,6 +41,48 @@ O workflow faz o resto. Em um ou dois minutos o pacote está no ar.
 Para remover um pacote, apague o `.deb` de `pool/` e dê push — os índices são
 regenerados do zero a cada publicação.
 
+## Sincronização automática de releases
+
+Pacotes que já são publicados como Release em outro repositório da LIPTECH não
+precisam ser copiados à mão. As origens ficam em `sync-sources.json`:
+
+```json
+[
+  { "repo": "liptech/winbox-installers", "asset": "*.deb", "component": "main", "keep": 2 }
+]
+```
+
+| Campo | Significado |
+|---|---|
+| `repo` | repositório GitHub de origem |
+| `asset` | padrão dos assets a baixar (glob) |
+| `component` | componente do pool (padrão: `main`) |
+| `keep` | quantas versões manter no pool (padrão: 3) |
+| `tag` | release específica (padrão: a mais recente) |
+
+O workflow `sync-releases.yml` roda **todo dia às 06:00 UTC** (03:00 em
+Brasília) e também sob demanda em Actions → Sincronizar releases. Ele:
+
+1. lê a release mais recente de cada origem;
+2. confere o `SHA256SUMS` da release, quando existir, e **aborta** se divergir;
+3. copia os `.deb` novos para o pool, com o nome no padrão Debian;
+4. poda as versões mais antigas além de `keep`;
+5. commita e chama o workflow de publicação.
+
+Se nada mudou, ele não commita nem publica.
+
+Para acompanhar outro repositório, acrescente uma entrada em
+`sync-sources.json`. Para testar sem alterar nada:
+
+```bash
+scripts/sync-releases.sh --dry-run
+```
+
+Não é preciso token nenhum além do `GITHUB_TOKEN` do próprio Actions. Como um
+push feito com esse token não dispara outros workflows, `sync-releases.yml`
+chama `publish.yml` explicitamente via `workflow_call` — por isso o
+`publish.yml` aceita esse gatilho.
+
 ## Estrutura
 
 ```
@@ -51,8 +93,11 @@ site/setup.sh                        instalador de um comando
 scripts/build-repo.sh                monta e assina ./public
 scripts/render-site.sh               renderiza a página e a lista de pacotes
 scripts/add-package.sh               coloca um .deb no lugar certo do pool
+scripts/sync-releases.sh             traz .deb das Releases de outros repos
 repo.conf                            suíte, componentes, arquiteturas, domínio
+sync-sources.json                    repositórios acompanhados automaticamente
 .github/workflows/publish.yml        build + assinatura + deploy no Pages
+.github/workflows/sync-releases.yml  sincronização diária das releases
 ```
 
 Nada em `public/` é versionado: ele é gerado a cada build.

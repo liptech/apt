@@ -1,0 +1,8 @@
+[
+  {
+    "repo": "liptech/winbox-installers",
+    "asset": "*.deb",
+    "component": "main",
+    "keep": 2
+  }
+]

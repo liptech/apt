@@ -1,0 +1,55 @@
+name: Sincronizar releases
+
+# Acompanha as Releases dos repositórios listados em sync-sources.json e traz
+# os .deb novos para o pool. Em seguida chama o workflow de publicação.
+#
+# Não precisa de token extra: lê releases públicas e commita neste próprio
+# repositório com o GITHUB_TOKEN. Como um push feito com esse token não
+# dispara outros workflows, a publicação é chamada explicitamente abaixo.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # diariamente às 06:00 UTC (03:00 em Brasília)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: sync-releases
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Procurar versões novas
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.sync.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sincronizar
+        id: sync
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/sync-releases.sh
+
+      - name: Commitar o que mudou
+        if: steps.sync.outputs.changed == '1'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pool
+          git commit -m "pacote: sincronizado das releases de origem
+
+          Commit automático de .github/workflows/sync-releases.yml."
+          git push
+
+  publish:
+    name: Publicar
+    needs: sync
+    if: needs.sync.outputs.changed == '1'
+    uses: ./.github/workflows/publish.yml
+    secrets: inherit
