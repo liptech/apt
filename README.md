@@ -301,3 +301,7 @@ após atualizar, reabra a loja para renovar sua apresentação.
 
 Metadados de aplicativos ficam em `site/appstream/components/<componente>/<arquitetura>/`.
 O gerador valida os XMLs e os converte com `appstreamcli`, sem executar os aplicativos.
+
+Para compatibilidade com o identificador de pacotes locais do PackageKit/GNOME
+Software 46, o catálogo LikeAD usa o ID do arquivo desktop
+(`org.liptech.LikeAD.desktop`). O ID interno GTK do aplicativo permanece igual.

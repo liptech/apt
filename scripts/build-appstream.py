@@ -34,6 +34,10 @@ for component in components:
                 image = app.find('screenshots/screenshot/image')
                 icon_url = image.text.split('/screenshots/')[0] + '/icon-128.png'
                 ET.SubElement(app, 'icon', {'type': 'remote', 'width': '128', 'height': '128'}).text = icon_url
+            # PackageKit identifies local .deb applications by the .desktop filename.
+            # GNOME Software 46 uses that identifier when refining its preview.
+            if identity == 'org.liptech.LikeAD':
+                app.find('id').text = app.findtext("launchable[@type='desktop-id']")
             catalog.append(app)
         target = out / 'dists' / suite / component / 'dep11'
         target.mkdir(parents=True, exist_ok=True)
