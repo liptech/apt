@@ -118,6 +118,66 @@ push feito com esse token não dispara outros workflows, `sync-releases.yml`
 chama `publish.yml` explicitamente via `workflow_call` — por isso o
 `publish.yml` aceita esse gatilho.
 
+## Segurança
+
+### Quem consegue publicar ou apagar
+
+Só quem tem acesso de escrita a `liptech/apt` — hoje apenas a conta `liptech`.
+A página `/admin` é pública, mas **inerte sem token**: toda escrita passa pela
+API do GitHub, que recusa com `401` quem não tiver credencial válida. Os botões
+da página são conveniência de interface, não controle de acesso; burlar o
+JavaScript não concede nada.
+
+Um fork ou pull request de terceiros **não executa nenhum workflow**: nenhum
+deles usa `pull_request` ou `pull_request_target`. É o que impede o ataque
+clássico de PR malicioso que lê secrets — a chave de assinatura nunca fica
+acessível a código vindo de fora.
+
+### A chave de assinatura
+
+`GPG_PRIVATE_KEY` e `GPG_PASSPHRASE` só são visíveis para workflows deste
+repositório, rodando em `main`. Quem tiver acesso de escrita pode, em
+princípio, escrever um workflow que a exfiltre — isso é inerente ao acesso de
+escrita, não uma falha de configuração. Por isso o acesso ao repositório é que
+deve ser tratado como o segredo.
+
+A assinatura garante **procedência, não inocuidade**: ela prova que o pacote
+saiu daqui, não que seja seguro. Um pacote ruim publicado por quem tem acesso
+seria assinado normalmente.
+
+### O token da página /admin
+
+É o elo mais frágil, porque vive no navegador. Use sempre:
+
+- token **fine-grained**, com `Contents: Read and write` **só** em `liptech/apt`;
+- validade curta;
+- sem marcar “lembrar neste navegador” em máquina compartilhada.
+
+Se vazar, o estrago fica contido a este repositório de pacotes públicos — nada
+de outros repositórios da conta.
+
+A página foi endurecida contra roubo desse token:
+
+| Medida | Efeito |
+|---|---|
+| Nenhum JavaScript externo | sem CDN, não há cadeia de suprimentos para comprometer |
+| CSP com hash do script | só o script exato do build roda; qualquer injeção é bloqueada |
+| `connect-src` restrito | mesmo um script injetado não conseguiria enviar o token para fora |
+| Dados via `textContent` | nenhum valor dinâmico entra no DOM como HTML |
+| `default-src 'none'` | nada carrega por omissão |
+| Recusa de iframe | evita clickjacking, já que o Pages não deixa definir cabeçalhos |
+| `noindex` | não aparece em buscadores |
+
+O hash da CSP é recalculado a cada build por `scripts/render-site.sh`, depois
+da substituição dos placeholders — mexer no script sem rebuildar faz a página
+parar de funcionar, em vez de rodar sem proteção.
+
+### O que isto não protege
+
+Quem instala o repositório confia na LIPTECH. A assinatura protege o caminho
+entre o servidor e a máquina do usuário: um intermediário não consegue injetar
+nem alterar pacotes. Não protege contra um pacote ruim publicado por dentro.
+
 ## Estrutura
 
 ```

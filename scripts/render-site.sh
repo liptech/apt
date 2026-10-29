@@ -155,6 +155,12 @@ if admin_src.exists():
     at = admin_src.read_text(encoding="utf-8")
     for k, v in repl.items():
         at = at.replace(k, v)
+    # CSP: hash do script ja substituido, para script-src estrito
+    import base64, hashlib, re
+    m = re.search(r"<script>(.*?)</script>", at, re.S)
+    if m:
+        h = base64.b64encode(hashlib.sha256(m.group(1).encode("utf-8")).digest()).decode()
+        at = at.replace("{{CSP_SCRIPT_HASH}}", "sha256-" + h)
     (out / "admin").mkdir(parents=True, exist_ok=True)
     (out / "admin" / "index.html").write_text(at, encoding="utf-8")
     print("    admin/index.html")

@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<!-- O hash do script e calculado no build por scripts/render-site.sh.
+     connect-src e o que importa aqui: mesmo que algum script fosse injetado,
+     ele nao conseguiria enviar o token para fora. -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src '{{CSP_SCRIPT_HASH}}';
+  style-src 'unsafe-inline' https://fonts.googleapis.com;
+  font-src https://fonts.gstatic.com;
+  img-src 'self';
+  connect-src 'self' https://api.github.com;
+  form-action 'none';
+  base-uri 'none'">
 <title>LIPTECH · Publicar pacote</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,6 +197,16 @@ footer p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
 <script>
 (function () {
   "use strict";
+
+  // frame-ancestors so vale como cabecalho HTTP, que o Pages nao deixa
+  // definir; entao a pagina se recusa a rodar dentro de um iframe.
+  if (window.top !== window.self) {
+    document.documentElement.innerHTML =
+      '<p style="font-family:sans-serif;color:#fff;background:#0A0A0A;padding:24px">' +
+      'Esta pagina nao pode ser aberta dentro de outro site.</p>';
+    try { window.top.location = window.self.location; } catch (e) {}
+    return;
+  }
 
   var REPO   = "{{REPO}}";
   var BRANCH = "main";
