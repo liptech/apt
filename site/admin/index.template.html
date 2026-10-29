@@ -99,6 +99,9 @@ td.pkg{font-weight:600;white-space:nowrap}
 td code{font-family:var(--mono);font-size:.84rem;color:var(--brand)}
 td.act{text-align:right}
 .muted{color:var(--dim);font-size:.85rem}
+.who{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim)}
+.who.on{color:var(--ok)}
+.who b{color:var(--txt);font-weight:500}
 #log{font-family:var(--mono);font-size:12px;line-height:1.85;margin:0;padding:0;list-style:none;
   max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,77,97,.55) transparent}
 #log li{display:flex;gap:10px;padding:2px 0}
@@ -148,7 +151,9 @@ footer p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
     <input type="password" id="token" placeholder="ghp_… ou github_pat_…" autocomplete="off" spellcheck="false">
     <div class="row">
       <label class="check"><input type="checkbox" id="remember"> Lembrar neste navegador</label>
-      <button id="check" style="margin-left:auto">Verificar</button>
+      <span id="who" class="who"></span>
+      <button id="forget" style="margin-left:auto">Esquecer</button>
+      <button id="check">Verificar</button>
     </div>
     <p class="hint">
       Um <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">token
@@ -495,18 +500,60 @@ footer p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
   }
 
   // ---------------------------------------------------------- token
+  var whoEl = $("who");
+
+  function showWho(login) {
+    whoEl.innerHTML = "";
+    if (!login) { whoEl.className = "who"; return; }
+    whoEl.className = "who on";
+    whoEl.appendChild(document.createTextNode("conta: "));
+    var b = document.createElement("b");
+    b.textContent = login;
+    whoEl.appendChild(b);
+  }
+
+  // A página não tem login nem ideia de quem você é: quem identifica a conta
+  // é o GitHub, a partir do token. Mostramos o dono para você conferir que o
+  // token é o que você acha que é.
+  async function whoAmI() {
+    try {
+      var u = await api("/user");
+      return u.login || "";
+    } catch (e) {
+      return "";   // token sem permissão de ler o perfil; segue sem o nome
+    }
+  }
+
   $("check").addEventListener("click", async function () {
     if (!token()) { log("campo do token vazio", "warn"); return; }
     try {
       var r = await api("/repos/" + REPO);
       var perm = r.permissions && r.permissions.push;
-      if (perm) log("token válido, com escrita em " + REPO, "ok");
-      else log("token lê " + REPO + ", mas não tem permissão de escrita", "warn");
+      var login = await whoAmI();
+      showWho(login);
+      if (perm) {
+        log("token válido" + (login ? " (conta " + login + ")" : "") +
+            ", com escrita em " + REPO, "ok");
+      } else {
+        log("token lê " + REPO + ", mas não tem permissão de escrita", "warn");
+      }
       store("liptech_token", token(), rememberEl.checked);
-      if (!rememberEl.checked) log("guardado só nesta aba", "info");
+      log(rememberEl.checked
+            ? "guardado neste navegador até você clicar em Esquecer"
+            : "guardado só nesta aba; some ao fechá-la", "info");
     } catch (err) {
+      showWho("");
       log(err.message, "err");
     }
+  });
+
+  $("forget").addEventListener("click", function () {
+    forget("liptech_token");
+    tokenEl.value = "";
+    rememberEl.checked = false;
+    showWho("");
+    log("token apagado deste navegador", "ok");
+    log("em máquina de terceiros, revogue-o também em github.com/settings/tokens", "warn");
   });
 
   tokenEl.addEventListener("change", function () {

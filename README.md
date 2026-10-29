@@ -172,6 +172,36 @@ O hash da CSP é recalculado a cada build por `scripts/render-site.sh`, depois
 da substituição dos placeholders — mexer no script sem rebuildar faz a página
 parar de funcionar, em vez de rodar sem proteção.
 
+### A página não sabe quem é você
+
+Não há login, conta nem sessão: é um arquivo estático. Quem identifica a conta
+é o **GitHub**, a partir do token — a página só encaminha. Na prática, *o token
+é a identidade*: quem o tiver é você, aos olhos da API, sem segundo fator.
+
+Depois de clicar em Verificar, a página mostra a conta dona do token ao lado da
+caixa, para você conferir que é o token que imagina ser. O botão **Esquecer**
+apaga o token do navegador — use sempre antes de sair de uma máquina que não é
+sua, e revogue o token em <https://github.com/settings/tokens> por garantia.
+
+### Usando de outro computador
+
+Nada está preso à sua máquina: a URL abre em qualquer lugar e funciona assim
+que você colar um token. Isso vale nos dois sentidos — um token copiado também
+funciona em qualquer lugar.
+
+Em máquina que não é sua, a ordem de preferência é:
+
+1. **Não usar a página.** Vá em [Add file → Upload files][up] no GitHub e
+   arraste o `.deb` para `incoming/`. Você entra com seu login normal, com 2FA,
+   e não deixa credencial nenhuma para trás. O resultado é idêntico.
+2. Se preferir a página, crie um token **só para aquela ocasião**, com validade
+   de um dia, não marque “lembrar”, e revogue ao terminar.
+
+[up]: https://github.com/liptech/apt/upload/main/incoming
+
+Nunca carregue o token em arquivo de texto, e-mail ou mensagem — se precisar
+levá-lo entre máquinas, use um gerenciador de senhas.
+
 ### O que isto não protege
 
 Quem instala o repositório confia na LIPTECH. A assinatura protege o caminho
