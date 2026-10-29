@@ -94,26 +94,20 @@ repositório** — ele foi gerado fora do Git e deve ser guardado em cofre.
 Edite `ARCHITECTURES` ou `SUITE` em `repo.conf` e dê push. Os índices passam a
 ser gerados para a nova configuração na publicação seguinte.
 
-## Ativar o domínio apt.liptech.com.br
+## Domínio
 
-O arquivo `site/CNAME` está como `site/CNAME.pending` para o site poder ser
-validado em `https://liptech.github.io/apt` antes do DNS existir.
+`apt.liptech.com.br` está ativo, com certificado Let's Encrypt e HTTPS
+obrigatório. O DNS é um CNAME na Cloudflare, **sem proxy**:
 
-1. No Cloudflare, na zona `liptech.com.br`, crie:
+| Tipo  | Nome | Destino             | Proxy                      |
+|-------|------|---------------------|----------------------------|
+| CNAME | apt  | `liptech.github.io` | DNS only (nuvem cinza)     |
 
-   | Tipo  | Nome | Destino             | Proxy          |
-   |-------|------|---------------------|----------------|
-   | CNAME | apt  | `liptech.github.io` | **DNS only** (nuvem cinza) |
+O proxy precisa continuar desligado: com a nuvem laranja o GitHub não
+consegue renovar o certificado.
 
-   O proxy precisa ficar desligado até o GitHub emitir o certificado, senão a
-   validação do domínio falha.
+O arquivo `site/CNAME` é o que amarra o domínio a este repositório — se ele
+sumir do artefato publicado, o GitHub desfaz o domínio personalizado.
 
-2. Quando `dig +short apt.liptech.com.br` responder, ative o domínio:
-
-   ```bash
-   git mv site/CNAME.pending site/CNAME
-   git commit -m "pages: ativar dominio apt.liptech.com.br"
-   git push
-   ```
-
-3. Em Settings → Pages, marque **Enforce HTTPS** assim que o certificado sair.
+Com domínio próprio o site fica na **raiz** (`https://apt.liptech.com.br/`),
+não em `/apt`.
