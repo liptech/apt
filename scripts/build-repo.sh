@@ -57,6 +57,10 @@ EOF
   done
 done
 
+# -------------------------------------------------------------- AppStream
+# Catalogs must exist before Release is hashed and signed.
+python3 "$ROOT/scripts/build-appstream.py" "$OUT" "$SUITE" "$COMPONENTS" "$ARCHITECTURES"
+
 # ---------------------------------------------------------------- Release
 log "gerando dists/$SUITE/Release"
 apt-ftparchive \

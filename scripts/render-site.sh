@@ -97,6 +97,11 @@ src_assets = root / "site" / "assets"
 if src_assets.is_dir():
     shutil.copytree(src_assets, out / "assets", dirs_exist_ok=True)
 
+# Apresentação pública: metadados, screenshots e ícones, sem código-fonte.
+src_appstream = root / "site" / "appstream"
+if src_appstream.is_dir():
+    shutil.copytree(src_appstream, out / "appstream", dirs_exist_ok=True)
+
 # fingerprint da chave publica exportada pelo build
 fingerprint = "chave nao disponivel"
 asc = out / f"{env['KEYRING_NAME']}.asc"

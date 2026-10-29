@@ -285,3 +285,19 @@ sumir do artefato publicado, o GitHub desfaz o domínio personalizado.
 
 Com domínio próprio o site fica na **raiz** (`https://apt.liptech.com.br/`),
 não em `/apt`.
+
+## Catálogo da loja (AppStream)
+
+O build gera `dists/stable/main/dep11/Components-amd64.yml.gz`, com o componente
+LikeAD Admin, e inclui seus hashes no Release antes da assinatura GPG.
+Imagens e ícone são publicados em `appstream/media/likead-admin/`.
+O código-fonte e o pacote LikeAD não são copiados para este repositório por essa
+integração: o catálogo serve também para refinar a apresentação do `.deb` local.
+
+Os clientes precisam configurar este repositório, atualizar os índices APT e ter
+AppStream/GNOME Software. Um computador que receba só um `.deb` isolado continua
+sem conhecer o catálogo antes da instalação. `setup.sh` configura os índices;
+após atualizar, reabra a loja para renovar sua apresentação.
+
+Metadados de aplicativos ficam em `site/appstream/components/<componente>/<arquitetura>/`.
+O gerador valida os XMLs e os converte com `appstreamcli`, sem executar os aplicativos.

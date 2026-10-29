@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<component type="desktop-application">
+  <id>org.liptech.LikeAD</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <name>LIPTECH LikeAD Admin</name>
+  <pkgname>likead-admin</pkgname>
+  <icon type="stock">org.liptech.LikeAD</icon>
+  <summary>Administre o Active Directory a partir do Linux</summary>
+  <description>
+    <p>
+      O LIPTECH LikeAD Admin é um console nativo para Linux que gerencia usuários,
+      grupos, unidades organizacionais e políticas de grupo de um domínio Active
+      Directory, com a mesma organização das ferramentas do Windows.
+    </p>
+    <p>Recursos:</p>
+    <ul>
+      <li>Árvore de domínio com unidades organizacionais, usuários, grupos e computadores</li>
+      <li>Propriedades de usuários e grupos, incluindo associações</li>
+      <li>Console de políticas de grupo com escopo, configurações e delegação</li>
+      <li>Autenticação Kerberos (SSO) ou LDAPS com conta de serviço</li>
+      <li>Gerenciamento de registros DNS com autenticação Kerberos</li>
+    </ul>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Usuários, grupos e computadores — dados de demonstração</caption>
+      <image type="source" width="1280" height="800">https://apt.liptech.com.br/appstream/media/likead-admin/screenshots/01-diretorio.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Políticas de grupo e vínculos — dados de demonstração</caption>
+      <image type="source" width="1280" height="800">https://apt.liptech.com.br/appstream/media/likead-admin/screenshots/02-politicas.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Editor de GPO destacável — dados de demonstração</caption>
+      <image type="source" width="1280" height="800">https://apt.liptech.com.br/appstream/media/likead-admin/screenshots/03-editor-gpo.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Gerenciador DNS com pesquisa — dados de demonstração</caption>
+      <image type="source" width="1280" height="800">https://apt.liptech.com.br/appstream/media/likead-admin/screenshots/04-dns.png</image>
+    </screenshot>
+  </screenshots>
+  <launchable type="desktop-id">org.liptech.LikeAD.desktop</launchable>
+  <url type="homepage">https://www.liptech.com.br</url>
+  <developer id="br.com.liptech">
+    <name>LIPTECH</name>
+  </developer>
+  <categories>
+    <category>System</category>
+  </categories>
+  <keywords>
+    <keyword>active directory</keyword>
+    <keyword>ldap</keyword>
+    <keyword>gpo</keyword>
+    <keyword>domínio</keyword>
+  </keywords>
+  <releases>
+    <release version="0.1.0" date="2026-10-27">
+      <description>
+        <p>Primeira versão: console de usuários, grupos e políticas de grupo.</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1" />
+</component>
