@@ -1,0 +1,8 @@
+public/
+*.gpg-agent
+.gnupg-tmp/
+
+# NUNCA commitar material de chave privada
+.keys/
+*.secret.asc
+*.passphrase

@@ -1,0 +1,79 @@
+name: Publicar repositório APT
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pool/**'
+      - 'site/**'
+      - 'scripts/**'
+      - 'repo.conf'
+      - '.github/workflows/publish.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicação por vez; não cancela uma que já está no ar.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Montar e assinar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar ferramentas do APT
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq apt-utils xz-utils
+
+      - name: Importar chave de assinatura
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          if [ -z "$GPG_PRIVATE_KEY" ]; then
+            echo "::error::secret GPG_PRIVATE_KEY não configurado no repositório."
+            exit 1
+          fi
+          mkdir -p ~/.gnupg && chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "pinentry-mode loopback"  >> ~/.gnupg/gpg.conf
+          gpgconf --kill gpg-agent || true
+          printf '%s\n' "$GPG_PRIVATE_KEY" | gpg --batch --quiet --import
+          . ./repo.conf
+          echo "${KEY_FINGERPRINT}:6:" | gpg --import-ownertrust
+          gpg --list-secret-keys --keyid-format=long
+
+      - name: Montar repositório
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          . ./repo.conf
+          GPG_KEY_ID="$KEY_FINGERPRINT" scripts/build-repo.sh
+
+      - name: Conferir assinatura do Release
+        run: |
+          . ./repo.conf
+          gpg --verify "public/dists/${SUITE}/InRelease"
+          gpg --verify "public/dists/${SUITE}/Release.gpg" "public/dists/${SUITE}/Release"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    name: Publicar no Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

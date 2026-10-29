@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIPTECH · Repositório APT</title>
+<meta name="description" content="Repositório APT oficial da LIPTECH — pacotes .deb assinados para Debian e Ubuntu.">
+<meta property="og:title" content="LIPTECH · Repositório APT">
+<meta property="og:description" content="Pacotes .deb assinados para Debian e Ubuntu.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://{{DOMAIN}}/">
+<meta property="og:image" content="https://{{DOMAIN}}/assets/icon-512.png">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --black:#0A0A0A;
+  --teal:#004D61;
+  --teal-mid:#00899B;
+  --cyan:#00C5DC;
+  --brand:#29ABE2;
+  --paper:#F5F6F7;
+  --navy:#343451;
+  --txt:#E8EAEC;
+  --muted:#9AA3AA;
+  --dim:#6B747C;
+  --line:rgba(0,77,97,.28);
+  --line-soft:rgba(0,77,97,.15);
+  --glass:rgba(10,10,10,.6);
+  --radius:.625rem;
+  --mono:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --sans:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--black);color:var(--txt);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* ---------- fundo: grid + glow + scanlines ---------- */
+.bg{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 15% -5%, rgba(0,77,97,.30), transparent 70%),
+    radial-gradient(700px 400px at 95% 10%, rgba(41,171,226,.10), transparent 70%),
+    linear-gradient(180deg,#0A0A0A 0%,#070A0C 100%);
+}
+.bg::after{content:"";position:absolute;inset:0;opacity:.35;
+  background-image:
+    linear-gradient(rgba(0,77,97,.16) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,77,97,.16) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 25%,transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 25%,transparent 80%);
+}
+.scan{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);}
+
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+
+/* ---------- labels HUD ---------- */
+.label{font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.26em;color:var(--teal-mid)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);margin-right:8px;
+  animation:pulse 2.4s ease-in-out infinite;vertical-align:middle}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.92}}
+
+/* ---------- painel glass + corner brackets ---------- */
+.panel{position:relative;background:var(--glass);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);border:1px solid var(--line-soft);
+  border-radius:var(--radius);
+  box-shadow:0 0 20px rgba(0,77,97,.06),inset 0 1px 0 rgba(255,255,255,.03);
+  transition:border-color .3s,box-shadow .3s}
+.panel:hover{border-color:var(--line);
+  box-shadow:0 0 30px rgba(0,77,97,.12),inset 0 1px 0 rgba(255,255,255,.05)}
+.bracket::before,.bracket::after{content:"";position:absolute;width:14px;height:14px;
+  border-color:var(--teal-mid);opacity:.65;pointer-events:none}
+.bracket::before{top:-1px;left:-1px;border-top:1px solid;border-left:1px solid;
+  border-top-left-radius:var(--radius)}
+.bracket::after{bottom:-1px;right:-1px;border-bottom:1px solid;border-right:1px solid;
+  border-bottom-right-radius:var(--radius)}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:50;
+  background:rgba(10,10,10,.72);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft)}
+.hdr{display:flex;align-items:center;gap:20px;height:68px}
+.hdr img{height:30px;width:auto;display:block;animation:breathe 5s ease-in-out infinite}
+nav{margin-left:auto;display:flex;gap:26px;align-items:center}
+nav a{font-family:var(--mono);font-size:11px;text-transform:uppercase;
+  letter-spacing:.16em;color:var(--muted);text-decoration:none;transition:color .2s}
+nav a:hover{color:var(--cyan)}
+@media(max-width:720px){nav a.opt{display:none}}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 52px;position:relative}
+h1{font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.08;margin:.5rem 0 .75rem;
+  font-weight:700;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--brand)}
+.lead{color:var(--muted);font-size:1.075rem;max-width:62ch;margin:0 0 30px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:34px}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line-soft);border-radius:999px;
+  padding:5px 12px;background:rgba(255,255,255,.03)}
+.chip b{color:var(--txt);font-weight:500}
+
+/* ---------- blocos de codigo ---------- */
+.code{position:relative;margin:0 0 16px}
+.code pre{margin:0;padding:18px 54px 18px 20px;overflow-x:auto;
+  background:rgba(0,0,0,.5);border:1px solid var(--line-soft);border-radius:var(--radius);
+  font-family:var(--mono);font-size:13px;line-height:1.75;color:#D6DDE2}
+.code pre .c{color:var(--dim)}
+.code pre .k{color:var(--cyan)}
+.code pre .s{color:var(--brand)}
+.code pre{scrollbar-width:thin;scrollbar-color:rgba(0,77,97,.55) transparent}
+.code pre::-webkit-scrollbar{height:6px;width:6px}
+.code pre::-webkit-scrollbar-track{background:transparent}
+.code pre::-webkit-scrollbar-thumb{background:rgba(0,77,97,.5);border-radius:3px}
+.code pre::-webkit-scrollbar-thumb:hover{background:rgba(0,137,155,.7)}
+.copy{position:absolute;top:9px;right:9px;z-index:2;cursor:pointer;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);background:#10181B;border:1px solid var(--line);
+  border-radius:6px;padding:6px 10px;transition:all .2s;
+  box-shadow:0 0 0 5px #10181B}
+.card .code pre{padding-top:34px}
+.copy:hover{color:#fff;background:#0B3340;border-color:var(--teal-mid);box-shadow:0 0 0 5px #10181B}
+.copy.ok{color:var(--cyan);border-color:var(--cyan)}
+
+/* ---------- secoes ---------- */
+section{padding:56px 0;border-top:1px solid rgba(0,77,97,.1)}
+h2{font-size:clamp(1.5rem,3.4vw,2.1rem);margin:.6rem 0 .4rem;font-weight:700;letter-spacing:-.015em}
+.sub{color:var(--muted);margin:0 0 28px;max-width:62ch}
+h3{font-size:1rem;margin:0 0 10px;font-weight:600}
+
+.steps{counter-reset:s;display:grid;gap:22px}
+.step{counter-increment:s;position:relative;padding:22px 22px 8px 22px}
+.step > h3::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);
+  color:var(--teal-mid);margin-right:12px;font-size:.8em;letter-spacing:.1em}
+.note{font-size:.875rem;color:var(--dim);margin:0 0 16px}
+.note code{font-family:var(--mono);font-size:.92em;color:var(--muted)}
+
+/* ---------- tabela ---------- */
+.tablewrap{overflow-x:auto}
+.tablewrap{scrollbar-width:thin;scrollbar-color:rgba(0,77,97,.55) transparent}
+.tablewrap::-webkit-scrollbar{height:6px}
+.tablewrap::-webkit-scrollbar-track{background:transparent}
+.tablewrap::-webkit-scrollbar-thumb{background:rgba(0,77,97,.5);border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:620px}
+th{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--teal-mid);text-align:left;padding:12px 14px;
+  border-bottom:1px solid var(--line);font-weight:500;white-space:nowrap}
+td{padding:14px;border-bottom:1px solid rgba(0,77,97,.1);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .2s}
+tbody tr:hover{background:rgba(0,77,97,.07)}
+td.pkg{font-weight:600;color:var(--txt);white-space:nowrap}
+td code{font-family:var(--mono);font-size:.85rem;color:var(--brand)}
+td.desc{color:var(--muted);min-width:220px}
+td.num{font-family:var(--mono);font-size:.82rem;color:var(--dim);white-space:nowrap}
+td a{color:var(--cyan);text-decoration:none;font-family:var(--mono);font-size:.82rem;
+  border-bottom:1px solid transparent;transition:border-color .2s}
+td a:hover{border-bottom-color:var(--cyan)}
+td.empty{text-align:center;color:var(--dim);padding:40px;font-family:var(--mono);font-size:.85rem}
+
+/* ---------- grid de cartoes ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.card{padding:22px}
+.card p{margin:0;color:var(--muted);font-size:.9rem}
+.card .big{font-family:var(--mono);font-size:1.05rem;color:var(--txt);
+  word-break:break-all;margin:8px 0 0;line-height:1.5}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:18px 0 0;
+  padding-top:16px;border-top:1px solid rgba(0,77,97,.16);font-size:.8rem}
+.kv dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--teal-mid);padding-top:3px}
+.kv dd{margin:0;color:var(--muted);font-family:var(--mono);font-size:.78rem;
+  word-break:break-word}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--txt);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 18px;background:rgba(0,77,97,.12);transition:all .25s}
+.btn:hover{background:rgba(0,77,97,.34);border-color:var(--teal-mid);
+  box-shadow:0 0 22px rgba(0,77,97,.3)}
+.btn.primary{background:rgba(41,171,226,.14);border-color:rgba(41,171,226,.45);color:#fff}
+.btn.primary:hover{background:rgba(41,171,226,.26);border-color:var(--brand);
+  box-shadow:0 0 26px rgba(41,171,226,.3)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line-soft);padding:34px 0 48px;margin-top:20px}
+.foot{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+.foot img{height:24px;opacity:.75}
+.foot p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim)}
+.foot .right{margin-left:auto;display:flex;gap:20px}
+.foot a{color:var(--muted);text-decoration:none}
+.foot a:hover{color:var(--cyan)}
+
+::selection{background:var(--teal);color:#fff}
+html::-webkit-scrollbar,body::-webkit-scrollbar{width:9px}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:#0A0A0A}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:var(--teal);border-radius:4px}
+html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover{background:#005a73}
+a:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="scan"></div>
+
+<header>
+  <div class="wrap hdr">
+    <a href="/" aria-label="LIPTECH"><img src="assets/liptech-horizontal.svg" alt="LIPTECH"></a>
+    <nav>
+      <a href="#instalacao">Instalação</a>
+      <a href="#pacotes">Pacotes</a>
+      <a href="#chave" class="opt">Chave GPG</a>
+      <a href="https://github.com/liptech/apt" class="opt">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="label"><span class="dot"></span>repo.status · online · atualizado {{UPDATED}}</div>
+    <h1>Repositório <em>APT</em> da LIPTECH</h1>
+    <p class="lead">
+      Pacotes <code style="font-family:var(--mono);color:var(--brand)">.deb</code> assinados
+      com GPG para Debian e Ubuntu. Instale uma vez e receba as atualizações pelo
+      <code style="font-family:var(--mono);color:var(--brand)">apt upgrade</code>, como qualquer outro repositório do sistema.
+    </p>
+    <div class="meta">
+      <span class="chip">suíte <b>{{SUITE}}</b></span>
+      <span class="chip">componente <b>{{COMPONENTS}}</b></span>
+      <span class="chip">arquiteturas <b>{{ARCHS}}</b></span>
+      <span class="chip">pacotes <b>{{PKGCOUNT}}</b></span>
+    </div>
+
+    <div class="code">
+      <button class="copy" type="button">copiar</button>
+      <pre><span class="c"># instalacao automatica (chave + sources + update)</span>
+curl -fsSL https://{{DOMAIN}}/setup.sh | sudo bash</pre>
+    </div>
+    <p class="note">
+      Prefere conferir cada passo? O procedimento manual está logo abaixo —
+      e o <a href="setup.sh" style="color:var(--muted)">setup.sh</a> pode ser lido antes de executar.
+    </p>
+  </div>
+
+  <section id="instalacao">
+    <div class="label">01 · setup</div>
+    <h2>Instalação manual</h2>
+    <p class="sub">Quatro passos. Funciona em Debian 11+, Ubuntu 20.04+ e derivados.</p>
+
+    <div class="steps">
+      <div class="panel bracket step">
+        <h3>Instalar as dependências</h3>
+        <div class="code">
+          <button class="copy" type="button">copiar</button>
+          <pre>sudo apt update
+sudo apt install -y curl gnupg ca-certificates</pre>
+        </div>
+      </div>
+
+      <div class="panel bracket step">
+        <h3>Adicionar a chave de assinatura</h3>
+        <div class="code">
+          <button class="copy" type="button">copiar</button>
+          <pre>sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://{{DOMAIN}}/{{KEYRING}}.asc \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/{{KEYRING}}.gpg
+sudo chmod 0644 /etc/apt/keyrings/{{KEYRING}}.gpg</pre>
+        </div>
+        <p class="note">A chave fica restrita a este repositório via <code>signed-by</code>: ela não valida nenhuma outra origem do sistema.</p>
+      </div>
+
+      <div class="panel bracket step">
+        <h3>Registrar o repositório</h3>
+        <div class="code">
+          <button class="copy" type="button">copiar</button>
+          <pre>ARCH=$(dpkg --print-architecture)
+KEY=/etc/apt/keyrings/{{KEYRING}}.gpg
+echo "deb [arch=$ARCH signed-by=$KEY] https://{{DOMAIN}} {{SUITE}} {{COMPONENTS}}" \
+  | sudo tee /etc/apt/sources.list.d/liptech.list</pre>
+        </div>
+        <p class="note">Em sistemas com suporte a deb822 (Debian 12+, Ubuntu 24.04+) você pode usar o formato novo:</p>
+        <div class="code">
+          <button class="copy" type="button">copiar</button>
+          <pre>sudo tee /etc/apt/sources.list.d/liptech.sources &gt;/dev/null &lt;&lt;'EOF'
+Types: deb
+URIs: https://{{DOMAIN}}
+Suites: {{SUITE}}
+Components: {{COMPONENTS}}
+Signed-By: /etc/apt/keyrings/{{KEYRING}}.gpg
+EOF</pre>
+        </div>
+      </div>
+
+      <div class="panel bracket step">
+        <h3>Atualizar e instalar</h3>
+        <div class="code">
+          <button class="copy" type="button">copiar</button>
+          <pre>sudo apt update
+sudo apt install &lt;nome-do-pacote&gt;</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pacotes">
+    <div class="label">02 · índice</div>
+    <h2>Pacotes disponíveis</h2>
+    <p class="sub">Gerado automaticamente a partir dos índices do repositório a cada publicação.</p>
+    <div class="panel bracket tablewrap">
+      <table>
+        <thead>
+          <tr><th>Pacote</th><th>Versão</th><th>Arq.</th><th>Descrição</th><th>Tamanho</th><th>Download</th></tr>
+        </thead>
+        <tbody>
+{{PACKAGES}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="chave">
+    <div class="label">03 · confiança</div>
+    <h2>Chave de assinatura</h2>
+    <p class="sub">Todo índice do repositório é assinado. O apt recusa qualquer alteração que não bata com esta chave.</p>
+    <div class="grid">
+      <div class="panel bracket card">
+        <div class="label">fingerprint</div>
+        <p class="big">{{FINGERPRINT}}</p>
+        <dl class="kv">
+          <dt>key id</dt><dd>{{KEYID}}</dd>
+          <dt>algoritmo</dt><dd>RSA 4096 · sem expiração</dd>
+          <dt>uid</dt><dd>{{KEYUID}}</dd>
+        </dl>
+      </div>
+      <div class="panel bracket card">
+        <div class="label">verificar localmente</div>
+        <div class="code" style="margin-top:10px">
+          <button class="copy" type="button">copiar</button>
+          <pre>gpg --show-keys /etc/apt/keyrings/{{KEYRING}}.gpg</pre>
+        </div>
+      </div>
+    </div>
+    <div class="links">
+      <a class="btn primary" href="{{KEYRING}}.asc">Baixar chave (.asc)</a>
+      <a class="btn" href="{{KEYRING}}.gpg">Baixar chave (.gpg)</a>
+      <a class="btn" href="dists/{{SUITE}}/InRelease">Ver InRelease</a>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <img src="assets/liptech-horizontal.svg" alt="LIPTECH">
+    <p>Explorando Tecnologias</p>
+    <div class="right">
+      <a href="https://github.com/liptech/apt">Código do repositório</a>
+      <a href="dists/{{SUITE}}/Release">Release</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var pre = btn.parentElement.querySelector('pre');
+    if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText.replace(/^#.*\n/gm, '').trim()).then(function () {
+      var old = btn.textContent;
+      btn.textContent = 'copiado';
+      btn.classList.add('ok');
+      setTimeout(function () { btn.textContent = old; btn.classList.remove('ok'); }, 1800);
+    });
+  });
+});
+</script>
+</body>
+</html>
