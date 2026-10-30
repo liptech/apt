@@ -91,8 +91,9 @@ body{
 header{position:sticky;top:0;z-index:50;
   background:rgba(10,10,10,.72);backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft)}
-.hdr{display:flex;align-items:center;gap:20px;height:68px}
-.hdr img{height:30px;width:auto;display:block;animation:breathe 5s ease-in-out infinite}
+.hdr{display:flex;align-items:center;gap:20px;height:84px}
+.hdr img{height:46px;width:auto;display:block;animation:breathe 5s ease-in-out infinite}
+@media(max-width:560px){.hdr{height:72px}.hdr img{height:36px}}
 nav{margin-left:auto;display:flex;gap:26px;align-items:center}
 nav a{font-family:var(--mono);font-size:11px;text-transform:uppercase;
   letter-spacing:.16em;color:var(--muted);text-decoration:none;transition:color .2s}
@@ -140,6 +141,10 @@ h2{font-size:clamp(1.5rem,3.4vw,2.1rem);margin:.6rem 0 .4rem;font-weight:700;let
 h3{font-size:1rem;margin:0 0 10px;font-weight:600}
 
 .steps{counter-reset:s;display:grid;gap:22px}
+/* item de grid nao encolhe abaixo do conteudo sem isto, e o <pre> estica o
+   painel inteiro em vez de rolar dentro dele */
+.steps>*,.grid>*{min-width:0}
+.code,.code pre{min-width:0;max-width:100%}
 .step{counter-increment:s;position:relative;padding:22px 22px 8px 22px}
 .step > h3::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);
   color:var(--teal-mid);margin-right:12px;font-size:.8em;letter-spacing:.1em}
@@ -195,7 +200,7 @@ td.empty{text-align:center;color:var(--dim);padding:40px;font-family:var(--mono)
 /* ---------- footer ---------- */
 footer{border-top:1px solid var(--line-soft);padding:34px 0 48px;margin-top:20px}
 .foot{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
-.foot img{height:24px;opacity:.75}
+.foot img{height:34px;opacity:.8}
 .foot p{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--dim)}
 .foot .right{margin-left:auto;display:flex;gap:20px}
