@@ -46,6 +46,10 @@ for deb in "${files[@]}"; do
   echo "  + $target"
 done
 
+if [[ -f keep.conf ]]; then
+  scripts/prune-packages.sh
+fi
+
 echo
 echo "pronto. commite e de push para publicar:"
 echo "    git add pool && git commit -m 'pacote: $name $version' && git push"

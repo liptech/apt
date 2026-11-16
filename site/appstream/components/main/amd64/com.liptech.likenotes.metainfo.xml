@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.liptech.likenotes</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+
+  <name>LikeNotes</name>
+  <pkgname>likenotes</pkgname>
+  <summary>Notas privadas com pastas, tags e sincronização opcional</summary>
+
+  <description>
+    <p>
+      LikeNotes é um aplicativo de notas local-first com criptografia de ponta a ponta,
+      organização por pastas e tags, prioridades, lixeira e busca instantânea.
+    </p>
+    <p>
+      O conteúdo pode ser sincronizado opcionalmente com Google Drive ou OneDrive.
+      O aplicativo não pede sua senha e mantém os dados protegidos no dispositivo.
+    </p>
+    <ul>
+      <li>Pastas hierárquicas e tags para organizar assuntos</li>
+      <li>Prioridades com código de cores e favoritos</li>
+      <li>Editor com formatação, imagens e visualização Markdown</li>
+      <li>Sincronização opcional com Google Drive e OneDrive</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">likenotes.desktop</launchable>
+
+  <url type="homepage">https://www.liptech.com.br</url>
+
+  <developer id="com.liptech">
+    <name>LipTech</name>
+  </developer>
+
+  <categories>
+    <category>Office</category>
+    <category>Utility</category>
+  </categories>
+
+  <keywords>
+    <keyword>notas</keyword>
+    <keyword>notes</keyword>
+    <keyword>criptografia</keyword>
+    <keyword>tags</keyword>
+  </keywords>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Notas organizadas por pastas, tags e prioridade</caption>
+      <image type="source" width="1600" height="900">https://apt.liptech.com.br/appstream/media/likenotes/screenshots/01-likenotes.png</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="0.1.1" date="2026-11-16">
+      <description>
+        <p>Interface modernizada, selo de status sincronizado com a conta conectada e ajustes de empacotamento.</p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-11-09">
+      <description>
+        <p>Primeira versão com sincronização, pastas, tags e segurança local.</p>
+      </description>
+    </release>
+  </releases>
+
+  <content_rating type="oars-1.1"/>
+
+  <icon type="stock">likenotes</icon>
+</component>

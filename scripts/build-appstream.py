@@ -28,7 +28,7 @@ for component in components:
                 raise SystemExit('Component missing ID or duplicated: ' + str(source))
             seen.add(identity)
             # Stock icons are not installed yet when previewing a local package.
-            if identity == 'org.liptech.LikeAD':
+            if identity in {'org.liptech.LikeAD', 'com.liptech.likenotes'}:
                 for icon in app.findall('icon'):
                     app.remove(icon)
                 image = app.find('screenshots/screenshot/image')

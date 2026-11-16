@@ -64,6 +64,11 @@ for deb in "${incoming[@]}"; do
   info "  -> $target"
 done
 
+if [[ -f keep.conf ]]; then
+  log "aplicando keep.conf"
+  scripts/prune-packages.sh
+fi
+
 echo
 log "caixa de entrada processada"
 [[ -n "${GITHUB_OUTPUT:-}" ]] && echo "changed=1" >> "$GITHUB_OUTPUT"

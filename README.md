@@ -41,6 +41,24 @@ O workflow faz o resto. Em um ou dois minutos o pacote está no ar.
 Para remover um pacote, apague o `.deb` de `pool/` e dê push — os índices são
 regenerados do zero a cada publicação.
 
+## Manter só a última versão
+
+Pacotes que não precisam de histórico ficam em `keep.conf`:
+
+```
+likenotes 1
+```
+
+O `intake.sh` aplica a poda depois de arquivar um `.deb` novo: mantém as N
+versões mais recentes (com a ordenação do dpkg) e apaga as antigas do pool.
+Para rodar manualmente:
+
+```bash
+scripts/prune-packages.sh
+# ou
+scripts/prune-packages.sh likenotes 1
+```
+
 ## Publicar pela página /admin
 
 <https://apt.liptech.com.br/admin/> — arraste um `.deb`, clique em Publicar.
